@@ -59,38 +59,13 @@ const TodoItem = ({ todo }) => {
     return category ? category.color : '#d9d9d9';
   };
 
-  // 编辑菜单选项
-  const menu = (
-    <Menu
-      onClick={(e) => {
-        if (e.key === 'edit') {
-          handleEdit();
-        } else if (e.key === 'delete') {
-          handleDelete();
-        }
-      }}
-    >
-      <Menu.Item key="edit" icon={<EditOutlined />}>
-        编辑
-      </Menu.Item>
-      <Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-        删除
-      </Menu.Item>
-    </Menu>
-  );
+
 
   /**
    * 处理编辑按钮点击
    */
   const handleEdit = () => {
-    // 初始化表单数据
-    form.setFieldsValue({
-      title: todo.title,
-      description: todo.description,
-      dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
-      priority: todo.priority,
-      category: todo.category
-    });
+    // 打开编辑模态框，表单数据通过initialValues初始化
     setIsEditing(true);
   };
 
@@ -174,9 +149,28 @@ const TodoItem = ({ todo }) => {
                 重新打开
               </Button>
             )}
-            
+
             {/* 更多操作 */}
-            <Dropdown overlay={menu} trigger={['click']}>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'edit',
+                    label: '编辑',
+                    icon: <EditOutlined />,
+                    onClick: handleEdit
+                  },
+                  {
+                    key: 'delete',
+                    label: '删除',
+                    icon: <DeleteOutlined />,
+                    danger: true,
+                    onClick: handleDelete
+                  }
+                ]
+              }}
+              trigger={['click']}
+            >
               <Button
                 type="text"
                 icon={<MoreOutlined />}
@@ -247,11 +241,19 @@ const TodoItem = ({ todo }) => {
         onCancel={() => setIsEditing(false)}
         footer={null}
         destroyOnClose
+        width={600}
       >
         <Form
           form={form}
           layout="vertical"
           onFinish={handleEditSubmit}
+          initialValues={{
+            title: todo.title,
+            description: todo.description,
+            dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
+            priority: todo.priority,
+            category: todo.category
+          }}
         >
           <Form.Item
             name="title"
@@ -278,7 +280,6 @@ const TodoItem = ({ todo }) => {
           <Form.Item
             name="priority"
             label="优先级"
-            initialValue="medium"
           >
             <Select placeholder="请选择优先级">
               <Option value="high">高</Option>
