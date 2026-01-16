@@ -5,6 +5,7 @@ import SearchBar from '../../components/SearchBar';
 import FilterPanel from '../../components/FilterPanel';
 import StatCard from '../../components/StatCard';
 import TodoList from '../../components/TodoList';
+import ThemeSwitcher from '../../components/ThemeSwitcher';
 
 /**
  * Home组件 - 首页，整合所有核心功能
@@ -12,8 +13,11 @@ import TodoList from '../../components/TodoList';
  */
 const Home = () => {
   return (
-    <div style={{ padding: 20, margin: '0 auto' }}>
-      <h1 style={{ marginBottom: 24 }}>待办事项</h1>
+    <div style={{ padding: 20, maxWidth: 1400, margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <h1>待办事项</h1>
+        <ThemeSwitcher />
+      </div>
 
       {/* 统计卡片 */}
       <StatCard />
