@@ -39,11 +39,12 @@ export const addTodo = (todoData) => {
     dueDate: todoData.dueDate || null,
     priority: todoData.priority || 'medium',
     category: todoData.category || '',
+    tags: todoData.tags || [],
     status: 'todo',
     createdAt: getCurrentTime(),
     updatedAt: getCurrentTime()
   };
-  
+
   const updatedTodos = [...todos, newTodo];
   saveTodos(updatedTodos);
   return updatedTodos;
@@ -67,7 +68,7 @@ export const updateTodo = (id, todoData) => {
     }
     return todo;
   });
-  
+
   saveTodos(updatedTodos);
   return updatedTodos;
 };
@@ -114,7 +115,7 @@ export const toggleTodoStatus = (id, status) => {
     }
     return todo;
   });
-  
+
   saveTodos(updatedTodos);
   return updatedTodos;
 };
@@ -129,14 +130,14 @@ export const getTodoStatistics = () => {
   const done = todos.filter(todo => todo.status === 'done').length;
   const inProgress = todos.filter(todo => todo.status === 'in-progress').length;
   const todo = todos.filter(todo => todo.status === 'todo').length;
-  
+
   // 按优先级统计
   const priorityStats = {
     high: todos.filter(todo => todo.priority === 'high').length,
     medium: todos.filter(todo => todo.priority === 'medium').length,
     low: todos.filter(todo => todo.priority === 'low').length
   };
-  
+
   // 按分类统计
   const categoryStats = {};
   todos.forEach(todo => {
@@ -144,10 +145,10 @@ export const getTodoStatistics = () => {
       categoryStats[todo.category] = (categoryStats[todo.category] || 0) + 1;
     }
   });
-  
+
   // 完成率
   const completionRate = total > 0 ? Math.round((done / total) * 100) : 0;
-  
+
   return {
     total,
     done,
@@ -167,30 +168,31 @@ export const getTodoStatistics = () => {
  */
 export const filterTodos = (todos, filters) => {
   let filtered = [...todos];
-  
+
   // 按状态筛选
   if (filters.status && filters.status !== 'all') {
     filtered = filtered.filter(todo => todo.status === filters.status);
   }
-  
+
   // 按优先级筛选
   if (filters.priority && filters.priority.length > 0) {
     filtered = filtered.filter(todo => filters.priority.includes(todo.priority));
   }
-  
+
   // 按分类筛选
   if (filters.category && filters.category.length > 0) {
     filtered = filtered.filter(todo => filters.category.includes(todo.category));
   }
-  
+
   // 按搜索关键词筛选
   if (filters.search && filters.search.trim()) {
     const keyword = filters.search.toLowerCase().trim();
-    filtered = filtered.filter(todo => 
+    filtered = filtered.filter(todo =>
       todo.title.toLowerCase().includes(keyword) ||
-      todo.description.toLowerCase().includes(keyword)
+      todo.description.toLowerCase().includes(keyword) ||
+      (todo.tags && todo.tags.length > 0 && todo.tags.some(tag => tag.toLowerCase().includes(keyword)))
     );
   }
-  
+
   return filtered;
 };

@@ -120,6 +120,21 @@ const TodoList = () => {
             </Select>
           </Form.Item>
 
+          <Form.Item
+            name="tags"
+            label="标签"
+            rules={[{ type: 'array', message: '请输入标签' }]}
+          >
+            <Select
+              mode="tags"
+              placeholder="请输入标签，按回车确认"
+              style={{ width: '100%' }}
+              tokenSeparators={[',', '，', ';', '；', ' ']}
+            >
+              {/* 可以添加常用标签作为选项 */}
+            </Select>
+          </Form.Item>
+
           <Form.Item style={{ textAlign: 'right' }}>
             <Space>
               <Button onClick={() => setIsAdding(false)}>取消</Button>

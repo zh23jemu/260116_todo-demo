@@ -182,7 +182,7 @@ const TodoItem = ({ todo }) => {
       >
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           {/* 标题 */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <h4 style={{
               margin: 0,
               textDecoration: todo.status === 'done' ? 'line-through' : 'none'
@@ -206,6 +206,17 @@ const TodoItem = ({ todo }) => {
               )}
             </Space>
           </div>
+
+          {/* 标签 */}
+          {todo.tags && todo.tags.length > 0 && (
+            <Space wrap style={{ margin: '8px 0' }}>
+              {todo.tags.map((tag, index) => (
+                <Tag key={index} color="blue" style={{ margin: '2px 0' }}>
+                  {tag}
+                </Tag>
+              ))}
+            </Space>
+          )}
 
           {/* 描述 */}
           {todo.description && (
@@ -252,7 +263,8 @@ const TodoItem = ({ todo }) => {
             description: todo.description,
             dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
             priority: todo.priority,
-            category: todo.category
+            category: todo.category,
+            tags: todo.tags || []
           }}
         >
           <Form.Item
@@ -298,6 +310,21 @@ const TodoItem = ({ todo }) => {
                   {category.name}
                 </Option>
               ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="tags"
+            label="标签"
+            rules={[{ type: 'array', message: '请输入标签' }]}
+          >
+            <Select
+              mode="tags"
+              placeholder="请输入标签，按回车确认"
+              style={{ width: '100%' }}
+              tokenSeparators={[',', '，', ';', '；', ' ']}
+            >
+              {/* 可以添加常用标签作为选项 */}
             </Select>
           </Form.Item>
 
