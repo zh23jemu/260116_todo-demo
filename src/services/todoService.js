@@ -38,6 +38,7 @@ export const addTodo = (todoData) => {
     title: todoData.title,
     description: todoData.description || '',
     dueDate: todoData.dueDate || null,
+    reminderTime: todoData.reminderTime || null,
     priority: todoData.priority || 'medium',
     category: todoData.category || '',
     tags: todoData.tags || [],
@@ -71,6 +72,28 @@ export const updateTodo = (id, todoData) => {
       return {
         ...todo,
         ...todoData,
+        updatedAt: getCurrentTime()
+      };
+    }
+    return todo;
+  });
+
+  saveTodos(updatedTodos);
+  return updatedTodos;
+};
+
+/**
+ * 标记任务为已提醒
+ * @param {string} id - 待办事项ID
+ * @returns {Array} 更新后的待办事项列表
+ */
+export const markAsReminded = (id) => {
+  const todos = getTodos();
+  const updatedTodos = todos.map(todo => {
+    if (todo.id === id) {
+      return {
+        ...todo,
+        reminded: true,
         updatedAt: getCurrentTime()
       };
     }

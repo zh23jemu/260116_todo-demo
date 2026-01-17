@@ -15,6 +15,7 @@ import {
   filterTodos
 } from '../services/todoService';
 import { getCategories, saveCategories } from '../services/storage';
+import { checkReminders } from '../services/reminderService';
 
 // 创建Context
 const TodoContext = createContext(null);
@@ -56,6 +57,22 @@ export const TodoProvider = ({ children }) => {
     setFilteredTodos(filtered);
     updateStatistics();
   }, [todos, filters]);
+
+  // 初始化提醒服务
+  useEffect(() => {
+    // 每分钟检查一次提醒
+    const interval = setInterval(() => {
+      const reminderIds = checkReminders(todos);
+      // 标记已提醒的任务
+      reminderIds.forEach(id => {
+        // 使用updateTodo函数来更新任务状态
+        updateTodo(id, { reminded: true });
+      });
+    }, 60000);
+
+    // 组件卸载时清理
+    return () => clearInterval(interval);
+  }, [todos, updateTodo]);
 
   /**
    * 加载初始数据
@@ -212,7 +229,7 @@ export const TodoProvider = ({ children }) => {
     const updatedCategories = categories.filter(category => category.id !== id);
     setCategories(updatedCategories);
     saveCategories(updatedCategories);
-    
+
     // 将使用该分类的待办事项分类清空
     const updatedTodos = todos.map(todo => {
       if (todo.category === id) {
@@ -261,25 +278,25 @@ export const TodoProvider = ({ children }) => {
     categories,
     filters,
     statistics,
-    
+
     // 待办事项操作
     addTodo: handleAddTodo,
     updateTodo: handleUpdateTodo,
     deleteTodo: handleDeleteTodo,
     batchDeleteTodos: handleBatchDeleteTodos,
     toggleTodoStatus: handleToggleTodoStatus,
-    
+
     // 子任务操作
     addSubtask: handleAddSubtask,
     updateSubtask: handleUpdateSubtask,
     deleteSubtask: handleDeleteSubtask,
     toggleSubtaskStatus: handleToggleSubtaskStatus,
-    
+
     // 分类操作
     addCategory: handleAddCategory,
     updateCategory: handleUpdateCategory,
     deleteCategory: handleDeleteCategory,
-    
+
     // 筛选操作
     updateFilters: handleUpdateFilters,
     resetFilters: handleResetFilters

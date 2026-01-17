@@ -2,7 +2,7 @@ import React from 'react';
 import { ConfigProvider, theme } from 'antd';
 import { TodoProvider } from './contexts/TodoContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-import Home from './views/Home';
+import Home from './views/Home/index';
 import './App.css';
 
 /**

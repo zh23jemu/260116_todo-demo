@@ -31,7 +31,8 @@ const TodoList = () => {
   const handleAddSubmit = (values) => {
     addTodo({
       ...values,
-      dueDate: values.dueDate ? values.dueDate.toISOString() : null
+      dueDate: values.dueDate ? values.dueDate.toISOString() : null,
+      reminderTime: values.reminderTime ? values.reminderTime.toISOString() : null
     });
     setIsAdding(false);
     form.resetFields();
@@ -118,6 +119,13 @@ const TodoList = () => {
                 </Option>
               ))}
             </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="reminderTime"
+            label="提醒时间"
+          >
+            <DatePicker showTime style={{ width: '100%' }} placeholder="请选择提醒时间" />
           </Form.Item>
 
           <Form.Item

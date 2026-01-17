@@ -91,7 +91,8 @@ const TodoItem = ({ todo }) => {
   const handleEditSubmit = (values) => {
     updateTodo(todo.id, {
       ...values,
-      dueDate: values.dueDate ? values.dueDate.toISOString() : null
+      dueDate: values.dueDate ? values.dueDate.toISOString() : null,
+      reminderTime: values.reminderTime ? values.reminderTime.toISOString() : null
     });
     setIsEditing(false);
   };
@@ -414,6 +415,7 @@ const TodoItem = ({ todo }) => {
             title: todo.title,
             description: todo.description,
             dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
+            reminderTime: todo.reminderTime ? new Date(todo.reminderTime) : null,
             priority: todo.priority,
             category: todo.category,
             tags: todo.tags || []
@@ -439,6 +441,13 @@ const TodoItem = ({ todo }) => {
             label="截止日期"
           >
             <DatePicker showTime style={{ width: '100%' }} placeholder="请选择截止日期" />
+          </Form.Item>
+
+          <Form.Item
+            name="reminderTime"
+            label="提醒时间"
+          >
+            <DatePicker showTime style={{ width: '100%' }} placeholder="请选择提醒时间" />
           </Form.Item>
 
           <Form.Item
