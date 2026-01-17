@@ -1,7 +1,7 @@
 // 待办事项列表组件
 import React, { useState } from 'react';
-import { Button, Space, Modal, Form, Input, DatePicker, Select, Empty } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, Space, Modal, Form, Input, DatePicker, Select, Empty, List } from 'antd';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTodo } from '../../contexts/TodoContext';
 import TodoItem from '../TodoItem';
 
@@ -134,6 +134,45 @@ const TodoList = () => {
               {/* 可以添加常用标签作为选项 */}
             </Select>
           </Form.Item>
+
+          {/* 子任务列表 */}
+          <Form.List
+            name="subtasks"
+            label="子任务"
+          >
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'title']}
+                      fieldKey={[fieldKey, 'title']}
+                      rules={[{ required: true, message: '请输入子任务标题' }]}
+                    >
+                      <Input placeholder="请输入子任务标题" />
+                    </Form.Item>
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => remove(name)}
+                    />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    添加子任务
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item style={{ textAlign: 'right' }}>
             <Space>

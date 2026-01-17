@@ -32,6 +32,7 @@ export const fetchTodos = () => {
  */
 export const addTodo = (todoData) => {
   const todos = getTodos();
+  const currentTime = getCurrentTime();
   const newTodo = {
     id: generateId(),
     title: todoData.title,
@@ -40,10 +41,16 @@ export const addTodo = (todoData) => {
     priority: todoData.priority || 'medium',
     category: todoData.category || '',
     tags: todoData.tags || [],
-    subtasks: todoData.subtasks || [],
+    subtasks: (todoData.subtasks || []).map(subtask => ({
+      id: generateId(),
+      title: subtask.title,
+      status: 'todo',
+      createdAt: currentTime,
+      updatedAt: currentTime
+    })),
     status: 'todo',
-    createdAt: getCurrentTime(),
-    updatedAt: getCurrentTime()
+    createdAt: currentTime,
+    updatedAt: currentTime
   };
 
   const updatedTodos = [...todos, newTodo];
