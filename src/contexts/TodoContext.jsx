@@ -48,14 +48,20 @@ export const TodoProvider = ({ children }) => {
 
   // 初始化数据
   useEffect(() => {
-    loadInitialData();
+    const fetchData = async () => {
+      await loadInitialData();
+    };
+    fetchData();
   }, []);
 
   // 当todos或filters变化时，更新筛选结果和统计数据
   useEffect(() => {
-    const filtered = filterTodos(todos, filters);
-    setFilteredTodos(filtered);
-    updateStatistics();
+    const updateData = async () => {
+      const filtered = filterTodos(todos, filters);
+      setFilteredTodos(filtered);
+      await updateStatistics();
+    };
+    updateData();
   }, [todos, filters]);
 
   // 初始化提醒服务
@@ -77,9 +83,9 @@ export const TodoProvider = ({ children }) => {
   /**
    * 加载初始数据
    */
-  const loadInitialData = () => {
-    const loadedTodos = fetchTodos();
-    const loadedCategories = getCategories();
+  const loadInitialData = async () => {
+    const loadedTodos = await fetchTodos();
+    const loadedCategories = await getCategories();
     setTodos(loadedTodos);
     setCategories(loadedCategories);
   };
@@ -87,8 +93,8 @@ export const TodoProvider = ({ children }) => {
   /**
    * 更新统计数据
    */
-  const updateStatistics = () => {
-    const stats = getTodoStatistics();
+  const updateStatistics = async () => {
+    const stats = await getTodoStatistics();
     setStatistics(stats);
   };
 
@@ -98,8 +104,8 @@ export const TodoProvider = ({ children }) => {
    * 添加待办事项
    * @param {Object} todoData - 待办事项数据
    */
-  const handleAddTodo = (todoData) => {
-    const updatedTodos = addTodo(todoData);
+  const handleAddTodo = async (todoData) => {
+    const updatedTodos = await addTodo(todoData);
     setTodos(updatedTodos);
   };
 
@@ -108,8 +114,8 @@ export const TodoProvider = ({ children }) => {
    * @param {string} id - 待办事项ID
    * @param {Object} todoData - 更新的数据
    */
-  const handleUpdateTodo = (id, todoData) => {
-    const updatedTodos = updateTodo(id, todoData);
+  const handleUpdateTodo = async (id, todoData) => {
+    const updatedTodos = await updateTodo(id, todoData);
     setTodos(updatedTodos);
   };
 
@@ -117,8 +123,8 @@ export const TodoProvider = ({ children }) => {
    * 删除待办事项
    * @param {string} id - 待办事项ID
    */
-  const handleDeleteTodo = (id) => {
-    const updatedTodos = deleteTodo(id);
+  const handleDeleteTodo = async (id) => {
+    const updatedTodos = await deleteTodo(id);
     setTodos(updatedTodos);
   };
 
@@ -126,8 +132,8 @@ export const TodoProvider = ({ children }) => {
    * 批量删除待办事项
    * @param {Array} ids - 待办事项ID数组
    */
-  const handleBatchDeleteTodos = (ids) => {
-    const updatedTodos = batchDeleteTodos(ids);
+  const handleBatchDeleteTodos = async (ids) => {
+    const updatedTodos = await batchDeleteTodos(ids);
     setTodos(updatedTodos);
   };
 
@@ -136,8 +142,8 @@ export const TodoProvider = ({ children }) => {
    * @param {string} id - 待办事项ID
    * @param {string} status - 新状态
    */
-  const handleToggleTodoStatus = (id, status) => {
-    const updatedTodos = toggleTodoStatus(id, status);
+  const handleToggleTodoStatus = async (id, status) => {
+    const updatedTodos = await toggleTodoStatus(id, status);
     setTodos(updatedTodos);
   };
 
@@ -148,8 +154,8 @@ export const TodoProvider = ({ children }) => {
    * @param {string} todoId - 父任务ID
    * @param {string} subtaskTitle - 子任务标题
    */
-  const handleAddSubtask = (todoId, subtaskTitle) => {
-    const updatedTodos = addSubtask(todoId, subtaskTitle);
+  const handleAddSubtask = async (todoId, subtaskTitle) => {
+    const updatedTodos = await addSubtask(todoId, subtaskTitle);
     setTodos(updatedTodos);
   };
 
@@ -159,8 +165,8 @@ export const TodoProvider = ({ children }) => {
    * @param {string} subtaskId - 子任务ID
    * @param {Object} subtaskData - 子任务数据
    */
-  const handleUpdateSubtask = (todoId, subtaskId, subtaskData) => {
-    const updatedTodos = updateSubtask(todoId, subtaskId, subtaskData);
+  const handleUpdateSubtask = async (todoId, subtaskId, subtaskData) => {
+    const updatedTodos = await updateSubtask(todoId, subtaskId, subtaskData);
     setTodos(updatedTodos);
   };
 
@@ -169,8 +175,8 @@ export const TodoProvider = ({ children }) => {
    * @param {string} todoId - 父任务ID
    * @param {string} subtaskId - 子任务ID
    */
-  const handleDeleteSubtask = (todoId, subtaskId) => {
-    const updatedTodos = deleteSubtask(todoId, subtaskId);
+  const handleDeleteSubtask = async (todoId, subtaskId) => {
+    const updatedTodos = await deleteSubtask(todoId, subtaskId);
     setTodos(updatedTodos);
   };
 
@@ -180,8 +186,8 @@ export const TodoProvider = ({ children }) => {
    * @param {string} subtaskId - 子任务ID
    * @param {string} status - 新状态
    */
-  const handleToggleSubtaskStatus = (todoId, subtaskId, status) => {
-    const updatedTodos = toggleSubtaskStatus(todoId, subtaskId, status);
+  const handleToggleSubtaskStatus = async (todoId, subtaskId, status) => {
+    const updatedTodos = await toggleSubtaskStatus(todoId, subtaskId, status);
     setTodos(updatedTodos);
   };
 

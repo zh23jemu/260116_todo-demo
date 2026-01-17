@@ -19,19 +19,19 @@ const getCurrentTime = () => {
 
 /**
  * 获取所有待办事项
- * @returns {Array} 待办事项列表
+ * @returns {Promise<Array>} 待办事项列表
  */
-export const fetchTodos = () => {
-  return getTodos();
+export const fetchTodos = async () => {
+  return await getTodos();
 };
 
 /**
  * 添加待办事项
  * @param {Object} todoData - 待办事项数据
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const addTodo = (todoData) => {
-  const todos = getTodos();
+export const addTodo = async (todoData) => {
+  const todos = await getTodos();
   const currentTime = getCurrentTime();
   const newTodo = {
     id: generateId(),
@@ -55,7 +55,7 @@ export const addTodo = (todoData) => {
   };
 
   const updatedTodos = [...todos, newTodo];
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
@@ -63,10 +63,10 @@ export const addTodo = (todoData) => {
  * 更新待办事项
  * @param {string} id - 待办事项ID
  * @param {Object} todoData - 更新的数据
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const updateTodo = (id, todoData) => {
-  const todos = getTodos();
+export const updateTodo = async (id, todoData) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === id) {
       return {
@@ -78,17 +78,17 @@ export const updateTodo = (id, todoData) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
 /**
  * 标记任务为已提醒
  * @param {string} id - 待办事项ID
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const markAsReminded = (id) => {
-  const todos = getTodos();
+export const markAsReminded = async (id) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === id) {
       return {
@@ -100,31 +100,31 @@ export const markAsReminded = (id) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
 /**
  * 删除待办事项
  * @param {string} id - 待办事项ID
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const deleteTodo = (id) => {
-  const todos = getTodos();
+export const deleteTodo = async (id) => {
+  const todos = await getTodos();
   const updatedTodos = todos.filter(todo => todo.id !== id);
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
 /**
  * 批量删除待办事项
  * @param {Array} ids - 待办事项ID数组
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const batchDeleteTodos = (ids) => {
-  const todos = getTodos();
+export const batchDeleteTodos = async (ids) => {
+  const todos = await getTodos();
   const updatedTodos = todos.filter(todo => !ids.includes(todo.id));
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
@@ -132,10 +132,10 @@ export const batchDeleteTodos = (ids) => {
  * 切换待办事项状态
  * @param {string} id - 待办事项ID
  * @param {string} status - 新状态
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const toggleTodoStatus = (id, status) => {
-  const todos = getTodos();
+export const toggleTodoStatus = async (id, status) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === id) {
       return {
@@ -147,7 +147,7 @@ export const toggleTodoStatus = (id, status) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
@@ -155,10 +155,10 @@ export const toggleTodoStatus = (id, status) => {
  * 添加子任务
  * @param {string} todoId - 父任务ID
  * @param {string} subtaskTitle - 子任务标题
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const addSubtask = (todoId, subtaskTitle) => {
-  const todos = getTodos();
+export const addSubtask = async (todoId, subtaskTitle) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === todoId) {
       const newSubtask = {
@@ -177,7 +177,7 @@ export const addSubtask = (todoId, subtaskTitle) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
@@ -186,10 +186,10 @@ export const addSubtask = (todoId, subtaskTitle) => {
  * @param {string} todoId - 父任务ID
  * @param {string} subtaskId - 子任务ID
  * @param {Object} subtaskData - 子任务数据
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const updateSubtask = (todoId, subtaskId, subtaskData) => {
-  const todos = getTodos();
+export const updateSubtask = async (todoId, subtaskId, subtaskData) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === todoId) {
       return {
@@ -210,7 +210,7 @@ export const updateSubtask = (todoId, subtaskId, subtaskData) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
@@ -218,10 +218,10 @@ export const updateSubtask = (todoId, subtaskId, subtaskData) => {
  * 删除子任务
  * @param {string} todoId - 父任务ID
  * @param {string} subtaskId - 子任务ID
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const deleteSubtask = (todoId, subtaskId) => {
-  const todos = getTodos();
+export const deleteSubtask = async (todoId, subtaskId) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === todoId) {
       return {
@@ -233,7 +233,7 @@ export const deleteSubtask = (todoId, subtaskId) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
@@ -242,10 +242,10 @@ export const deleteSubtask = (todoId, subtaskId) => {
  * @param {string} todoId - 父任务ID
  * @param {string} subtaskId - 子任务ID
  * @param {string} status - 新状态
- * @returns {Array} 更新后的待办事项列表
+ * @returns {Promise<Array>} 更新后的待办事项列表
  */
-export const toggleSubtaskStatus = (todoId, subtaskId, status) => {
-  const todos = getTodos();
+export const toggleSubtaskStatus = async (todoId, subtaskId, status) => {
+  const todos = await getTodos();
   const updatedTodos = todos.map(todo => {
     if (todo.id === todoId) {
       return {
@@ -266,16 +266,16 @@ export const toggleSubtaskStatus = (todoId, subtaskId, status) => {
     return todo;
   });
 
-  saveTodos(updatedTodos);
+  await saveTodos(updatedTodos);
   return updatedTodos;
 };
 
 /**
  * 统计待办事项数据
- * @returns {Object} 统计数据
+ * @returns {Promise<Object>} 统计数据
  */
-export const getTodoStatistics = () => {
-  const todos = getTodos();
+export const getTodoStatistics = async () => {
+  const todos = await getTodos();
   const total = todos.length;
   const done = todos.filter(todo => todo.status === 'done').length;
   const inProgress = todos.filter(todo => todo.status === 'in-progress').length;

@@ -6,6 +6,7 @@ import FilterPanel from '../../components/FilterPanel';
 import StatCard from '../../components/StatCard';
 import TodoList from '../../components/TodoList';
 import ThemeSwitcher from '../../components/ThemeSwitcher';
+import SyncSwitcher from '../../components/SyncSwitcher';
 
 /**
  * Home组件 - 首页，整合所有核心功能
@@ -16,7 +17,10 @@ const Home = () => {
     <div style={{ padding: 20, maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <h1>待办事项</h1>
-        <ThemeSwitcher />
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <SyncSwitcher />
+          <ThemeSwitcher />
+        </div>
       </div>
 
       {/* 统计卡片 */}
