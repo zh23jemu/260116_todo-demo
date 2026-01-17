@@ -1,12 +1,13 @@
 // 待办事项项组件
 import React, { useState } from 'react';
-import { Card, Button, Tag, Space, Popconfirm, Dropdown, Menu, Modal, Form, Input, DatePicker, Select } from 'antd';
-import { EditOutlined, DeleteOutlined, MoreOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Card, Button, Tag, Space, Popconfirm, Dropdown, Menu, Modal, Form, Input, DatePicker, Select, Collapse, List } from 'antd';
+import { EditOutlined, DeleteOutlined, MoreOutlined, CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTodo } from '../../contexts/TodoContext';
 import { formatDate, getDateDescription } from '../../utils/dateUtils';
 
 const { TextArea } = Input;
 const { Option } = Select;
+const { Panel } = Collapse;
 
 /**
  * TodoItem组件 - 用于显示单个待办事项
@@ -15,9 +16,16 @@ const { Option } = Select;
  * @returns {JSX.Element} TodoItem组件
  */
 const TodoItem = ({ todo }) => {
-  const { updateTodo, deleteTodo, toggleTodoStatus, categories } = useTodo();
+  const { updateTodo, deleteTodo, toggleTodoStatus, addSubtask, deleteSubtask, toggleSubtaskStatus, categories } = useTodo();
   const [isEditing, setIsEditing] = useState(false);
+  const [isAddingSubtask, setIsAddingSubtask] = useState(false);
   const [form] = Form.useForm();
+  const [subtaskForm] = Form.useForm();
+
+  // 计算子任务完成进度
+  const subtaskProgress = todo.subtasks && todo.subtasks.length > 0
+    ? Math.round((todo.subtasks.filter(st => st.status === 'done').length / todo.subtasks.length) * 100)
+    : 0;
 
   // 根据优先级获取对应的样式
   const getPriorityStyle = (priority) => {
@@ -94,6 +102,33 @@ const TodoItem = ({ todo }) => {
    */
   const handleStatusChange = (status) => {
     toggleTodoStatus(todo.id, status);
+  };
+
+  /**
+   * 处理添加子任务
+   * @param {Object} values - 表单值
+   */
+  const handleAddSubtask = (values) => {
+    addSubtask(todo.id, values.title);
+    setIsAddingSubtask(false);
+    subtaskForm.resetFields();
+  };
+
+  /**
+   * 处理删除子任务
+   * @param {string} subtaskId - 子任务ID
+   */
+  const handleDeleteSubtask = (subtaskId) => {
+    deleteSubtask(todo.id, subtaskId);
+  };
+
+  /**
+   * 处理子任务状态切换
+   * @param {string} subtaskId - 子任务ID
+   * @param {string} status - 新状态
+   */
+  const handleSubtaskStatusChange = (subtaskId, status) => {
+    toggleSubtaskStatus(todo.id, subtaskId, status);
   };
 
   return (
@@ -222,7 +257,7 @@ const TodoItem = ({ todo }) => {
           {todo.description && (
             <p style={{
               margin: '8px 0',
-              color: '#666',
+              opacity: 0.85,
               textDecoration: todo.status === 'done' ? 'line-through' : 'none'
             }}>
               {todo.description}
@@ -230,7 +265,7 @@ const TodoItem = ({ todo }) => {
           )}
 
           {/* 底部信息 */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#999', fontSize: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: 0.65, fontSize: '12px' }}>
             {/* 截止日期 */}
             {todo.dueDate && (
               <span>
@@ -242,8 +277,125 @@ const TodoItem = ({ todo }) => {
               创建: {formatDate(todo.createdAt, 'YYYY-MM-DD')}
             </span>
           </div>
+
+          {/* 子任务区域 */}
+          {todo.subtasks && todo.subtasks.length > 0 && (
+            <Collapse
+              ghost
+              size="small"
+              style={{ marginTop: 12 }}
+              defaultActiveKey={[]}
+              items={[
+                {
+                  key: 'subtasks',
+                  label: (
+                    <span style={{ fontSize: '13px' }}>
+                      子任务 ({todo.subtasks.filter(st => st.status === 'done').length}/{todo.subtasks.length})
+                      {subtaskProgress > 0 && (
+                        <Tag color={subtaskProgress === 100 ? 'green' : 'blue'} style={{ marginLeft: 8 }}>
+                          {subtaskProgress}%
+                        </Tag>
+                      )}
+                    </span>
+                  ),
+                  children: (
+                    <List
+                      size="small"
+                      dataSource={todo.subtasks}
+                      renderItem={(subtask) => (
+                        <List.Item
+                          key={subtask.id}
+                          style={{
+                            padding: '8px 12px',
+                            borderRadius: 4,
+                            margin: '4px 0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            backgroundColor: subtask.status === 'done' ? 'rgba(0, 0, 0, 0.06)' : 'transparent'
+                          }}
+                        >
+                          <Space size="small">
+                            {/* 子任务复选框 */}
+                            <Button
+                              type="text"
+                              icon={subtask.status === 'done' ? <CheckOutlined style={{ color: '#52c41a' }} /> : <CloseOutlined style={{ color: '#d9d9d9' }} />}
+                              onClick={() => handleSubtaskStatusChange(subtask.id, subtask.status === 'done' ? 'todo' : 'done')}
+                              size="small"
+                              style={{ padding: '0 4px' }}
+                            />
+                            <span style={{
+                              textDecoration: subtask.status === 'done' ? 'line-through' : 'none',
+                              opacity: subtask.status === 'done' ? 0.6 : 1
+                            }}>
+                              {subtask.title}
+                            </span>
+                          </Space>
+                          <Popconfirm
+                            title="确认删除此子任务？"
+                            onConfirm={() => handleDeleteSubtask(subtask.id)}
+                            okText="确认"
+                            cancelText="取消"
+                          >
+                            <Button
+                              type="text"
+                              danger
+                              icon={<DeleteOutlined />}
+                              size="small"
+                              style={{ padding: '0 4px' }}
+                            />
+                          </Popconfirm>
+                        </List.Item>
+                      )}
+                    />
+                  )
+                }
+              ]}
+            />
+          )}
+
+          {/* 添加子任务按钮 */}
+          <Button
+            type="dashed"
+            block
+            icon={<PlusOutlined />}
+            onClick={() => setIsAddingSubtask(true)}
+            size="small"
+            style={{ marginTop: 8 }}
+          >
+            添加子任务
+          </Button>
         </Space>
       </Card>
+
+      {/* 添加子任务模态框 */}
+      <Modal
+        title="添加子任务"
+        open={isAddingSubtask}
+        onCancel={() => setIsAddingSubtask(false)}
+        footer={null}
+        destroyOnClose
+      >
+        <Form
+          form={subtaskForm}
+          layout="vertical"
+          onFinish={handleAddSubtask}
+        >
+          <Form.Item
+            name="title"
+            label="子任务标题"
+            rules={[{ required: true, message: '请输入子任务标题' }]}
+          >
+            <Input placeholder="请输入子任务标题" />
+          </Form.Item>
+          <Form.Item style={{ textAlign: 'right' }}>
+            <Space>
+              <Button onClick={() => setIsAddingSubtask(false)}>取消</Button>
+              <Button type="primary" htmlType="submit">添加</Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {/* 编辑模态框 */}
       <Modal

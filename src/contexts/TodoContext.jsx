@@ -7,6 +7,10 @@ import {
   deleteTodo,
   batchDeleteTodos,
   toggleTodoStatus,
+  addSubtask,
+  updateSubtask,
+  deleteSubtask,
+  toggleSubtaskStatus,
   getTodoStatistics,
   filterTodos
 } from '../services/todoService';
@@ -120,6 +124,50 @@ export const TodoProvider = ({ children }) => {
     setTodos(updatedTodos);
   };
 
+  // 子任务操作方法
+
+  /**
+   * 添加子任务
+   * @param {string} todoId - 父任务ID
+   * @param {string} subtaskTitle - 子任务标题
+   */
+  const handleAddSubtask = (todoId, subtaskTitle) => {
+    const updatedTodos = addSubtask(todoId, subtaskTitle);
+    setTodos(updatedTodos);
+  };
+
+  /**
+   * 更新子任务
+   * @param {string} todoId - 父任务ID
+   * @param {string} subtaskId - 子任务ID
+   * @param {Object} subtaskData - 子任务数据
+   */
+  const handleUpdateSubtask = (todoId, subtaskId, subtaskData) => {
+    const updatedTodos = updateSubtask(todoId, subtaskId, subtaskData);
+    setTodos(updatedTodos);
+  };
+
+  /**
+   * 删除子任务
+   * @param {string} todoId - 父任务ID
+   * @param {string} subtaskId - 子任务ID
+   */
+  const handleDeleteSubtask = (todoId, subtaskId) => {
+    const updatedTodos = deleteSubtask(todoId, subtaskId);
+    setTodos(updatedTodos);
+  };
+
+  /**
+   * 切换子任务状态
+   * @param {string} todoId - 父任务ID
+   * @param {string} subtaskId - 子任务ID
+   * @param {string} status - 新状态
+   */
+  const handleToggleSubtaskStatus = (todoId, subtaskId, status) => {
+    const updatedTodos = toggleSubtaskStatus(todoId, subtaskId, status);
+    setTodos(updatedTodos);
+  };
+
   // 分类操作方法
 
   /**
@@ -220,6 +268,12 @@ export const TodoProvider = ({ children }) => {
     deleteTodo: handleDeleteTodo,
     batchDeleteTodos: handleBatchDeleteTodos,
     toggleTodoStatus: handleToggleTodoStatus,
+    
+    // 子任务操作
+    addSubtask: handleAddSubtask,
+    updateSubtask: handleUpdateSubtask,
+    deleteSubtask: handleDeleteSubtask,
+    toggleSubtaskStatus: handleToggleSubtaskStatus,
     
     // 分类操作
     addCategory: handleAddCategory,

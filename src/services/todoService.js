@@ -40,6 +40,7 @@ export const addTodo = (todoData) => {
     priority: todoData.priority || 'medium',
     category: todoData.category || '',
     tags: todoData.tags || [],
+    subtasks: todoData.subtasks || [],
     status: 'todo',
     createdAt: getCurrentTime(),
     updatedAt: getCurrentTime()
@@ -110,6 +111,125 @@ export const toggleTodoStatus = (id, status) => {
       return {
         ...todo,
         status,
+        updatedAt: getCurrentTime()
+      };
+    }
+    return todo;
+  });
+
+  saveTodos(updatedTodos);
+  return updatedTodos;
+};
+
+/**
+ * 添加子任务
+ * @param {string} todoId - 父任务ID
+ * @param {string} subtaskTitle - 子任务标题
+ * @returns {Array} 更新后的待办事项列表
+ */
+export const addSubtask = (todoId, subtaskTitle) => {
+  const todos = getTodos();
+  const updatedTodos = todos.map(todo => {
+    if (todo.id === todoId) {
+      const newSubtask = {
+        id: generateId(),
+        title: subtaskTitle,
+        status: 'todo',
+        createdAt: getCurrentTime(),
+        updatedAt: getCurrentTime()
+      };
+      return {
+        ...todo,
+        subtasks: [...(todo.subtasks || []), newSubtask],
+        updatedAt: getCurrentTime()
+      };
+    }
+    return todo;
+  });
+
+  saveTodos(updatedTodos);
+  return updatedTodos;
+};
+
+/**
+ * 更新子任务
+ * @param {string} todoId - 父任务ID
+ * @param {string} subtaskId - 子任务ID
+ * @param {Object} subtaskData - 子任务数据
+ * @returns {Array} 更新后的待办事项列表
+ */
+export const updateSubtask = (todoId, subtaskId, subtaskData) => {
+  const todos = getTodos();
+  const updatedTodos = todos.map(todo => {
+    if (todo.id === todoId) {
+      return {
+        ...todo,
+        subtasks: (todo.subtasks || []).map(subtask => {
+          if (subtask.id === subtaskId) {
+            return {
+              ...subtask,
+              ...subtaskData,
+              updatedAt: getCurrentTime()
+            };
+          }
+          return subtask;
+        }),
+        updatedAt: getCurrentTime()
+      };
+    }
+    return todo;
+  });
+
+  saveTodos(updatedTodos);
+  return updatedTodos;
+};
+
+/**
+ * 删除子任务
+ * @param {string} todoId - 父任务ID
+ * @param {string} subtaskId - 子任务ID
+ * @returns {Array} 更新后的待办事项列表
+ */
+export const deleteSubtask = (todoId, subtaskId) => {
+  const todos = getTodos();
+  const updatedTodos = todos.map(todo => {
+    if (todo.id === todoId) {
+      return {
+        ...todo,
+        subtasks: (todo.subtasks || []).filter(subtask => subtask.id !== subtaskId),
+        updatedAt: getCurrentTime()
+      };
+    }
+    return todo;
+  });
+
+  saveTodos(updatedTodos);
+  return updatedTodos;
+};
+
+/**
+ * 切换子任务状态
+ * @param {string} todoId - 父任务ID
+ * @param {string} subtaskId - 子任务ID
+ * @param {string} status - 新状态
+ * @returns {Array} 更新后的待办事项列表
+ */
+export const toggleSubtaskStatus = (todoId, subtaskId, status) => {
+  const todos = getTodos();
+  const updatedTodos = todos.map(todo => {
+    if (todo.id === todoId) {
+      return {
+        ...todo,
+        subtasks: (todo.subtasks || []).map(subtask => {
+          if (subtask.id === subtaskId) {
+            return {
+              ...subtask,
+              status,
+              updatedAt: getCurrentTime()
+            };
+          }
+          return subtask;
+        }),
         updatedAt: getCurrentTime()
       };
     }
